@@ -1,8 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>can_plugins2_porting</name>
-  <version>0.0.0</version>
-  <description>The can_plugins2_porting package</description>
+  <version>0.0.1</version>
+  <description>
+  The can_plugins2_porting package 
+  It is a porting of can_plugins2 package to ROS.
+  I want to use can_plugins2 package in ROS2. However, ROS2 is not  used in my community.
+  I regret that anybody DO NOT use my ROS2 packages!!!!!!!!
+  </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -13,7 +18,7 @@
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <license>MIT</license>
 
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
@@ -56,10 +61,16 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
 
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend>
+  <depend>nodelet</depend>
+  <depend>pluginlib</depend>
+
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
-
+    <nodelet plugin="${prefix}/nodelet_description.xml"/>
   </export>
 </package>

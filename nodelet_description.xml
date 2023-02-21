@@ -1,0 +1,5 @@
+<library path="lib/libcan_plugins">
+  <class name="can_plugins/SlcanBridge" type="can_plugins::SlcanBridge" base_class_type="nodelet::Nodelet">
+    <description>slcan_bridge</description>
+  </class>
+</library>
