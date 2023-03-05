@@ -236,13 +236,13 @@ namespace can_plugins2_porting
     void SlcanBridge::readingProcess(const std::vector<uint8_t> data){
         std::vector<uint8_t> cobs_output_buffer_ = cobs::decode(data);
 
-        NODELET_INFO("RreadingProcess %s",test::hex_to_string(cobs_output_buffer_).c_str());
-
+        NODELET_INFO("RreadingProcess %s",test::hex_to_string(cobs_output_buffer_ ).c_str());
+        NODELET_INFO("Text length %ld",cobs_output_buffer_ .size());
         //check it is handshake. USBCAN will send "HelloSlcan" when the connection is established.
-        static const uint8_t HelloSlcan[] ={slcan_command::Negotiation<<4, 'H','e','l','l','o','S','l','c','a','n'};
-        if(data.size()==11+1){
+        if(obs_output_buffer_.size() == 12){
+            static const uint8_t HelloSlcan[] ={0x01<<4,'H','e','l','l','o','U','S','B','C','A','N'};
             bool is_handshake = true;
-            for(int i = 0; i < 10; i++){
+            for(int i = 0; i < 11; i++){
                 if(cobs_output_buffer_[i] != HelloSlcan[i]){
                     is_handshake = false;
                     break;
