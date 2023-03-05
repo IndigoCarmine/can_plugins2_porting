@@ -8,5 +8,5 @@
   </group>
   <!-- CAN -->
   <node pkg="nodelet" type="nodelet" name="slcan_bridge" 
-  args="$(arg nodelet_mode) can_plugins/SlcanBridge $(arg manager_name)" output="screen"/>
+  args="$(arg nodelet_mode) can_plugins2_porting/SlcanBridge $(arg manager_name)" output="screen"/>
 </launch>
