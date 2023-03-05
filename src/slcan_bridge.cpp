@@ -242,7 +242,7 @@ namespace can_plugins2_porting
         if(obs_output_buffer_.size() == 12){
             static const uint8_t HelloSlcan[] ={0x01<<4,'H','e','l','l','o','U','S','B','C','A','N'};
             bool is_handshake = true;
-            for(int i = 0; i < 11; i++){
+            for(int i = 0; i < 12; i++){
                 if(cobs_output_buffer_[i] != HelloSlcan[i]){
                     is_handshake = false;
                     break;
