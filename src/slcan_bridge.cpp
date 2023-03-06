@@ -97,7 +97,7 @@ namespace can_plugins2_porting
                 can_rx_pub_ = nh.advertise<can_plugins2_porting::Frame>("can_rx", 10);
                 can_tx_sub_ = nh.subscribe<can_plugins2_porting::Frame>("can_tx", 10, &SlcanBridge::canRxCallback, this);
 
-                std::string port_name="/dev/usbcan";
+                std::string port_name="/dev/usbcan2";
 
                 //initialize asio members.
                 io_context_ = std::make_shared<boost::asio::io_context>();
@@ -156,10 +156,13 @@ namespace can_plugins2_porting
             }catch(boost::system::system_error e){
                 switch (e.code().value()){
                     case 2:
-                        NODELET_ERROR("Cannot connect. No such file or directory");
+                        NODELET_ERROR("Cannot connect. No such a device");
                         break;
                     case 13:
                         NODELET_ERROR("Cannot connect. Permission denied");
+                        break;
+                    case 25:
+                        NODELET_ERROR("Cannot connect. Inappropriate ioctl for device. There is  mistakes in udev rule, I think.");
                         break;
                     default:
                         NODELET_ERROR("Cannot connect. Unknown error");
@@ -233,13 +236,13 @@ namespace can_plugins2_porting
     void SlcanBridge::readingProcess(const std::vector<uint8_t> data){
         std::vector<uint8_t> cobs_output_buffer_ = cobs::decode(data);
 
-        NODELET_INFO("RreadingProcess %s",test::hex_to_string(cobs_output_buffer_).c_str());
-
+        NODELET_INFO("RreadingProcess %s",test::hex_to_string(cobs_output_buffer_ ).c_str());
+        NODELET_INFO("Text length %ld",cobs_output_buffer_ .size());
         //check it is handshake. USBCAN will send "HelloSlcan" when the connection is established.
-        static const uint8_t HelloSlcan[] ={slcan_command::Negotiation<<4, 'H','e','l','l','o','S','l','c','a','n'};
-        if(data.size()==11+1){
+        if(cobs_output_buffer_.size() == 10+1){
+            static const uint8_t HelloSlcan[] ={0x01<<4,'H','e','l','l','o','S','L','C','A','N'};
             bool is_handshake = true;
-            for(int i = 0; i < 10; i++){
+            for(int i = 0; i < 12; i++){
                 if(cobs_output_buffer_[i] != HelloSlcan[i]){
                     is_handshake = false;
                     break;
@@ -269,14 +272,14 @@ namespace can_plugins2_porting
         uint8_t dlc : data length
         uint8_t data[8] : data
         */
-        auto msg = can_plugins2_porting::Frame::Ptr();
-        msg->is_error = cobs_output_buffer_[0]&0x1;
-        msg->is_extended = cobs_output_buffer_[0]>>1&0x1;
-        msg->is_rtr = cobs_output_buffer_[0]>>2&0x1;
-        msg->id = cobs_output_buffer_[1]<<12|cobs_output_buffer_[2]<<8|cobs_output_buffer_[3]<<4|cobs_output_buffer_[4];
-        msg->dlc = cobs_output_buffer_[5];
+        can_plugins2_porting::Frame msg;
+        msg.is_error = cobs_output_buffer_[0]&0x1;
+        msg.is_extended = cobs_output_buffer_[0]>>1&0x1;
+        msg.is_rtr = cobs_output_buffer_[0]>>2&0x1;
+        msg.id = cobs_output_buffer_[1]<<12|cobs_output_buffer_[2]<<8|cobs_output_buffer_[3]<<4|cobs_output_buffer_[4];
+        msg.dlc = cobs_output_buffer_[5];
         for(int i = 0; i < 8; i++){
-            msg->data[i] = cobs_output_buffer_[4+i];
+            msg.data[i] = cobs_output_buffer_[4+i];
         }
         can_rx_pub_.publish(msg);
         return;
