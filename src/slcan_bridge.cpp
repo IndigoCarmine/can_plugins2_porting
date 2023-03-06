@@ -239,8 +239,8 @@ namespace can_plugins2_porting
         NODELET_INFO("RreadingProcess %s",test::hex_to_string(cobs_output_buffer_ ).c_str());
         NODELET_INFO("Text length %ld",cobs_output_buffer_ .size());
         //check it is handshake. USBCAN will send "HelloSlcan" when the connection is established.
-        if(obs_output_buffer_.size() == 12){
-            static const uint8_t HelloSlcan[] ={0x01<<4,'H','e','l','l','o','U','S','B','C','A','N'};
+        if(cobs_output_buffer_.size() == 10+1){
+            static const uint8_t HelloSlcan[] ={0x01<<4,'H','e','l','l','o','S','L','C','A','N'};
             bool is_handshake = true;
             for(int i = 0; i < 12; i++){
                 if(cobs_output_buffer_[i] != HelloSlcan[i]){
