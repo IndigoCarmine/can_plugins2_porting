@@ -1,5 +1,5 @@
 #include <boost/array.hpp>
-#include <can_plugins2/msg/frame.hpp>
+#include <can_plugins2_porting/Frame.h>
 #define CAN_MTU 8
 
 
@@ -16,9 +16,9 @@ static void can_pack(boost::array<uint8_t, CAN_MTU> &buf, const T data)
 }
 
 template<typename T>
-static can_plugins2::msg::Frame get_frame(const uint16_t id, const T data)
+static can_plugins2_porting::Frame get_frame(const uint16_t id, const T data)
 {
-  can_plugins::Frame frame;
+  can_plugins2_porting::Frame frame;
   frame.id = id;
   frame.is_rtr = false;
   frame.is_extended = false;
